@@ -62,6 +62,9 @@ public class ControllerServlet extends HttpServlet {
 				case "/insert":
 					insertBook(request, response);
           			break;
+				case "/update":
+					updateBook( request, response );
+					break;
 				case "/delete":
 					deleteBook( request, response );
 					break;
@@ -101,8 +104,8 @@ public class ControllerServlet extends HttpServlet {
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String id = request.getParameter( "id" );
-		Book book = bookDAO.getBook( Integer.parseInt( id ) );
+		int id = Integer.parseInt( request.getParameter( "id" ) );
+		Book book = bookDAO.getBook( id );
 
 		RequestDispatcher dispatcher = request.getRequestDispatcher( "/BookForm.jsp" );
 		request.setAttribute( "book", book );
@@ -121,11 +124,24 @@ public class ControllerServlet extends HttpServlet {
 		response.sendRedirect("list");
 	}
 
+	private void updateBook(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		int id = Integer.parseInt( request.getParameter( "id" ) );
+		String title = request.getParameter( "booktitle" );
+		String author = request.getParameter( "bookauthor" );
+		String priceString = request.getParameter( "bookprice" );
+
+		Book updateBook = new Book( id, title, author, Float.parseFloat( priceString ) );
+
+		bookDAO.updateBook( updateBook );
+		response.sendRedirect( "list" );
+	}
+
 	private void deleteBook(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String id = request.getParameter( "id" );
+		int id = Integer.parseInt( request.getParameter( "id" ) );
 
-		bookDAO.deleteBook( Integer.parseInt( id ) );
+		bookDAO.deleteBook( id );
 		response.sendRedirect( "list" );
 	}
 
